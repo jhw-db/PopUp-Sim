@@ -70,6 +70,11 @@ pip install .
    .venv\Scripts\activate
    ```
 
+5. **Install pre-commit hooks:**
+   ```bash
+   uv run pre-commit install
+   ```
+
 ### Development Commands
 
 - **Run tests:**
@@ -94,8 +99,24 @@ pip install .
 
 - **Run all checks (format, lint, type check, test):**
   ```bash
-  uv run ruff format . && uv run ruff check . && uv run mypy src/ && uv run pytest
+  uv run ruff format . && uv run ruff check . && uv run mypy backend/src/ && uv run pytest
   ```
+
+### Code Quality & Pre-commit Hooks
+
+The project uses pre-commit hooks to ensure code quality. These run automatically on every commit:
+
+- **File checks:** Trailing whitespace, end-of-file fixes, YAML/TOML validation
+- **Code formatting:** Ruff formatter (tabs, single quotes, 120 char lines)
+- **Linting:** Ruff linter (focuses on bugs, unused code, simplifications)
+- **Type checking:** MyPy for static type analysis
+- **Code quality:** Pylint for additional code quality checks
+- **Test coverage:** Pytest with coverage reporting
+
+**Manual pre-commit run:**
+```bash
+uv run pre-commit run --all-files
+```
 
 ### Project Structure
 
