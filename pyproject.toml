@@ -38,3 +38,58 @@ dev = [
     "pytest-mock>=3.15.1",
     "ruff>=0.13.0",
 ]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "tab"
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["F", "B", "C4", "ARG", "SIM"]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+files = ["backend/src", "backend/tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+adopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--cov=popup_sim",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-fail-under=90",
+]
+markers = [
+    "unit: Unit tests (fast, isolated)",
+    "integration: Integration tests (external APIs)",
+    "pending: Tests written before implementation (TDD)",
+]
+
+[tool.coverage.run]
+source = ["backend/src"]
+omit = ["backend/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError"
+]
+show_missing = true
