@@ -66,13 +66,14 @@ testpaths = ["backend/tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-adopts = [
+addopts = [
     "--strict-markers",
     "--strict-config",
     "--verbose",
     "--cov=popup_sim",
     "--cov-report=term-missing",
     "--cov-report=html",
+    "--cov-report=xml",
     "--cov-fail-under=90",
 ]
 markers = [
