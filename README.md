@@ -8,7 +8,7 @@ PopUp-Sim is a microscopic simulation tool that models the European freight rail
 
 **Using uv (Recommended):**
 ```bash
-uv add PopUp-Sim
+uv sync --frozen
 ```
 
 **Using pip:**
@@ -22,7 +22,7 @@ pip install PopUp-Sim
 ```bash
 git clone https://github.com/jhw-db/PopUp-Sim.git
 cd PopUp-Sim
-uv sync
+uv sync --frozen
 ```
 
 **Using pip:**
