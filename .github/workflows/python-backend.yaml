@@ -12,8 +12,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.11"
-          - "3.12"
+          - "3.13"
     steps:
       - uses: actions/checkout@v4
       - name: Install uv and set the python version
@@ -32,8 +31,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.11"
-          - "3.12"
+          - "3.13"
         linter:
           - ruff
           - pylint
@@ -63,8 +61,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.11"
-          - "3.12"
+          - "3.13"
     steps:
       - uses: actions/checkout@v4
       - name: Install uv and set the python version
