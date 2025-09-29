@@ -3,8 +3,18 @@ name : Python backend
 on:
   pull_request:
     branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/python-backend.yml'
+      - 'pyproject.toml'
+      - 'uv.lock'
   push:
     branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/python-backend.yml'
+      - 'pyproject.toml'
+      - 'uv.lock'
 
 jobs:
   format:
