@@ -19,16 +19,12 @@ on:
 jobs:
   format:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version:
-          - "3.13"
     steps:
       - uses: actions/checkout@v4
       - name: Install uv and set the python version
         uses: astral-sh/setup-uv@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.13"
           enable-cache: true
       - name: Install the project
         run: uv sync --locked --all-extras --dev
@@ -40,8 +36,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version:
-          - "3.13"
         linter:
           - ruff
           - pylint
@@ -51,7 +45,7 @@ jobs:
       - name: Install uv and set the python version
         uses: astral-sh/setup-uv@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.13"
           enable-cache: true
       - name: Install the project
         run: uv sync --locked --all-extras --dev
@@ -68,16 +62,12 @@ jobs:
   test:
     needs: format
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version:
-          - "3.13"
     steps:
       - uses: actions/checkout@v4
       - name: Install uv and set the python version
         uses: astral-sh/setup-uv@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.13"
           enable-cache: true
       - name: Install the project
         run: uv sync --locked --all-extras --dev
@@ -85,7 +75,7 @@ jobs:
         run: uv run pytest --tb=short || true
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
-        if: matrix.python-version == '3.11' && hashFiles('coverage.xml') != ''
+        if: hashFiles('coverage.xml') != ''
         with:
           file: ./coverage.xml
           fail_ci_if_error: false
