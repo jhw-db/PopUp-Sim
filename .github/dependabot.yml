@@ -1,0 +1,44 @@
+version: 2
+updates:
+  # Enable version updates for Python dependencies
+  - package-ecosystem: "uv"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - python
+    reviewers:
+      - jhw-db
+      - VolkerKuehn
+    assignees:
+      - jhw-db
+      - VolkerKuehn
+    commit-message:
+      prefix: "chore(backend): ⬆️ deps"
+      prefix-development: "chore(backend): ⬆️ dev deps"
+      include: "scope"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+    reviewers:
+      - jhw-db
+      - VolkerKuehn
+    assignees:
+      - jhw-db
+      - VolkerKuehn
+    commit-message:
+      prefix: "chore: 💚 ci"
+      include: "scope"
