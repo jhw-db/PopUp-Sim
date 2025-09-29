@@ -74,7 +74,7 @@ jobs:
       - name: Test with pytest
         run: uv run pytest --tb=short || true
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: matrix.python-version == '3.11' && hashFiles('coverage.xml') != ''
         with:
           file: ./coverage.xml
