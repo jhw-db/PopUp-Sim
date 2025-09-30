@@ -29,23 +29,14 @@ jobs:
   lint:
     needs: format
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        linter:
-          - ruff
-          - pylint
-          - mypy
     steps:
       - name: Setup Python development environment
         uses: ./.github/setup-python/dev.yml
       - name: Lint with ruff
-        if: matrix.linter == 'ruff'
         run: uv run ruff check --output-format=github .
       - name: Lint with pylint
-        if: matrix.linter == 'pylint'
         run: uv run pylint backend/src/ --output-format=colorized
       - name: Type check with mypy
-        if: matrix.linter == 'mypy'
         run: uv run mypy backend/src/ --show-error-codes
 
   test:
