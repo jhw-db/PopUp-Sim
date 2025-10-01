@@ -19,14 +19,22 @@ on:
 
 jobs:
   format:
+    name: Code Formatting
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python development environment
         uses: ./.github/setup-python/dev.yml
-      - name: Format with ruff
+      - name: Check code formatting with ruff
         run: uv run ruff format --check --diff .
+      - name: Summary
+        run: echo "✅ Code formatting check completed" >> $GITHUB_STEP_SUMMARY
+        if: success()
+      - name: Summary
+        run: echo "❌ Code formatting issues found" >> $GITHUB_STEP_SUMMARY
+        if: failure()
 
   ruff:
+    name: Ruff Linting
     needs: format
     runs-on: ubuntu-latest
     steps:
@@ -42,8 +50,15 @@ jobs:
         with:
           sarif_file: ruff-results.sarif
         if: always()
+      - name: Summary
+        run: echo "✅ Ruff linting completed successfully" >> $GITHUB_STEP_SUMMARY
+        if: success()
+      - name: Summary
+        run: echo "⚠️ Ruff found linting issues" >> $GITHUB_STEP_SUMMARY
+        if: failure()
 
   pylint:
+    name: Pylint Analysis
     needs: format
     runs-on: ubuntu-latest
     steps:
@@ -57,8 +72,15 @@ jobs:
           name: pylint-report
           path: pylint-report.json
         if: always()
+      - name: Summary
+        run: echo "✅ Pylint analysis completed successfully" >> $GITHUB_STEP_SUMMARY
+        if: success()
+      - name: Summary
+        run: echo "⚠️ Pylint found code quality issues" >> $GITHUB_STEP_SUMMARY
+        if: failure()
 
   mypy:
+    name: Type Checking
     needs: format
     runs-on: ubuntu-latest
     steps:
@@ -80,8 +102,15 @@ jobs:
           name: mypy-report
           path: mypy-report.json
         if: always()
+      - name: Summary
+        run: echo "✅ Type checking completed successfully" >> $GITHUB_STEP_SUMMARY
+        if: success()
+      - name: Summary
+        run: echo "⚠️ MyPy found type issues" >> $GITHUB_STEP_SUMMARY
+        if: failure()
 
   test:
+    name: Tests & Coverage
     needs: format
     runs-on: ubuntu-latest
     steps:
@@ -95,3 +124,9 @@ jobs:
         with:
           file: ./coverage.xml
           fail_ci_if_error: false
+      - name: Summary
+        run: echo "✅ Tests completed successfully" >> $GITHUB_STEP_SUMMARY
+        if: success()
+      - name: Summary
+        run: echo "❌ Some tests failed" >> $GITHUB_STEP_SUMMARY
+        if: failure()
