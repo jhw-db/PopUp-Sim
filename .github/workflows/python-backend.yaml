@@ -26,7 +26,7 @@ jobs:
       - name: Format with ruff
         run: uv run ruff format --check --diff .
 
-  lint:
+  ruff:
     needs: format
     runs-on: ubuntu-latest
     steps:
@@ -34,8 +34,22 @@ jobs:
         uses: ./.github/setup-python/dev.yml
       - name: Lint with ruff
         run: uv run ruff check --output-format=github .
+
+  pylint:
+    needs: format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python development environment
+        uses: ./.github/setup-python/dev.yml
       - name: Lint with pylint
-        run: uv run pylint backend/src/ --output-format=colorized
+        run: uv run pylint backend/src/ --output-format=github
+
+  mypy:
+    needs: format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python development environment
+        uses: ./.github/setup-python/dev.yml
       - name: Type check with mypy
         run: uv run mypy backend/src/ --show-error-codes
 
