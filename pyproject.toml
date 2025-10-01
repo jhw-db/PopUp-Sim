@@ -48,7 +48,16 @@ indent-style = "tab"
 docstring-code-format = true
 
 [tool.ruff.lint]
-select = ["F", "B", "C4", "ARG", "SIM"]
+select = ["F", "B", "C4", "ARG", "SIM", "C90", "PLR09"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-args = 5
+max-branches = 12
+max-returns = 6
+max-statements = 50
 
 [tool.pylint.format]
 max-line-length = 120
