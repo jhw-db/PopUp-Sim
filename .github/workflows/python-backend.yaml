@@ -194,7 +194,7 @@ jobs:
           fi
         shell: bash
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: hashFiles('coverage.xml') != ''
         with:
           file: ./coverage.xml
