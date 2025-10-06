@@ -6,14 +6,14 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/python-backend.yaml'
-      - '.github/workflows/setup-python/**'
+      - '.github/actions/setup-python-**/**'
       - 'pyproject.toml'
       - 'uv.lock'
   push:
     branches: [main]
     paths:
       - 'backend/**'
-      - '.github/workflows/setup-python/**'
+      - '.github/actions/setup-python-**/**'
       - 'pyproject.toml'
       - 'uv.lock'
 
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python development environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-dev
       - name: Check code formatting with ruff
         run: uv run ruff format --check --diff .
       - name: Summary
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python development environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-dev
       - name: Lint with ruff (annotations)
         run: uv run ruff check --output-format=github .
       - name: Generate SARIF report
@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python development environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-dev
       - name: Lint with pylint
         run: uv run pylint backend/src/ --output-format=github,json:pylint-report.json
       - name: Upload pylint report
@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python development environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-dev
       - name: Add mypy problem matcher
         run: echo "::add-matcher::.github/problem-matchers/mypy.json"
       - name: Type check with mypy
@@ -117,7 +117,7 @@ jobs:
       security-events: write
     steps:
       - name: Setup Python production environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-prod
       - name: Export production requirements
         # Use requirements.txt instead of uv.lock to exclude dev dependencies
         # Syft can read uv.lock but cannot filter dev dependencies
@@ -162,7 +162,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python development environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-dev
       - name: Test with pytest
         run: |
           if [ -d "backend/tests" ] && [ "$(find backend/tests -name '*.py' -type f | wc -l)" -gt 0 ]; then
