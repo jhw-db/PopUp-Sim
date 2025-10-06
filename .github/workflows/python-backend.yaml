@@ -154,7 +154,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
-        if: always()
+        if: steps.check-deps.outputs.has_deps == 'true' && always()
       - name: Upload security reports
         uses: actions/upload-artifact@v4
         with:
@@ -162,7 +162,7 @@ jobs:
           path: |
             sbom.json
             grype-report.json
-        if: always()
+        if: steps.check-deps.outputs.has_deps == 'true' && always()
       - name: Summary
         run: |
           if [ "${{ steps.check-deps.outputs.has_deps }}" = "true" ]; then
