@@ -55,6 +55,53 @@ jobs:
         if: matrix.linter == 'mypy'
         run: uv run mypy backend/src/ --show-error-codes
 
+  security:
+    name: Security Scan
+    needs: format
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Setup Python production environment
+        uses: ./.github/setup-python/dev.yml
+      - name: Export production requirements
+        # Use requirements.txt instead of uv.lock to exclude dev dependencies
+        # Syft can read uv.lock but cannot filter dev dependencies
+        run: uv export --no-dev --format requirements-txt > requirements-prod.txt
+      - name: Generate SBOM with Syft
+        uses: anchore/sbom-action@v0
+        with:
+          path: requirements-prod.txt
+          format: spdx-json
+          artifact-name: sbom.spdx.json
+      - name: Scan vulnerabilities with Grype
+        uses: anchore/scan-action@v6
+        id: scan
+        with:
+          path: sbom.spdx.json
+          fail-build: false
+          output-format: sarif
+
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
+        if: always()
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            sbom.json
+            grype-report.json
+        if: always()
+      - name: Summary
+        run: echo "✅ No security vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+        if: success()
+      - name: Summary
+        run: echo "⚠️ Security vulnerabilities detected" >> $GITHUB_STEP_SUMMARY
+        if: failure()
+
   test:
     needs: format
     runs-on: ubuntu-latest
