@@ -102,7 +102,7 @@ jobs:
         run: echo "::remove-matcher owner=mypy::"
         if: always()
       - name: Generate mypy JSON report
-        run: uv run mypy backend/src/ --show-error-codes --no-error-summary --output json --exit-zero > mypy-report.json
+        run: uv run mypy backend/src/ --show-error-codes --no-error-summary --output json > mypy-report.json || true
         if: always()
       - name: Upload mypy report
         uses: actions/upload-artifact@v4
@@ -126,21 +126,25 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup Python production environment
-        uses: ./.github/actions/setup-python-prod
-      - name: Export production requirements
-        # Use requirements.txt instead of uv.lock to exclude dev dependencies
-        # Syft can read uv.lock but cannot filter dev dependencies
-        run: uv export --no-dev --format requirements-txt > requirements-prod.txt
+      - name: Check if dependencies exist
+        id: check-deps
+        run: |
+          if grep -q '^dependencies = \[\]$' pyproject.toml; then
+            echo "has_deps=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_deps=true" >> $GITHUB_OUTPUT
+          fi
       - name: Generate SBOM with Syft
         uses: anchore/sbom-action@v0
+        if: steps.check-deps.outputs.has_deps == 'true'
         with:
-          path: requirements-prod.txt
+          path: backend/src
           format: spdx-json
           artifact-name: sbom.spdx.json
       - name: Scan vulnerabilities with Grype
         uses: anchore/scan-action@v6
         id: scan
+        if: steps.check-deps.outputs.has_deps == 'true'
         with:
           path: sbom.spdx.json
           fail-build: false
@@ -160,7 +164,12 @@ jobs:
             grype-report.json
         if: always()
       - name: Summary
-        run: echo "✅ No security vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+        run: |
+          if [ "${{ steps.check-deps.outputs.has_deps }}" = "true" ]; then
+            echo "✅ No security vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ Security scan skipped - no dependencies to scan" >> $GITHUB_STEP_SUMMARY
+          fi
         if: success()
       - name: Summary
         run: echo "⚠️ Security vulnerabilities detected" >> $GITHUB_STEP_SUMMARY
