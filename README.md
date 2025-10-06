@@ -83,12 +83,17 @@ pip install .
 
 - **Type checking:**
   ```bash
-  uv run mypy src/
+  uv run mypy backend/src/
+  ```
+
+- **Code quality analysis:**
+  ```bash
+  uv run pylint backend/src/
   ```
 
 - **Run all checks (format, lint, type check, test):**
   ```bash
-  uv run ruff format . && uv run ruff check . && uv run mypy backend/src/ && uv run pytest
+  uv run ruff format . && uv run ruff check . && uv run mypy backend/src/ && uv run pylint backend/src/ && uv run pytest
   ```
 
 ### Code Quality & Pre-commit Hooks
@@ -97,10 +102,9 @@ The project uses pre-commit hooks to ensure code quality. These run automaticall
 
 - **File checks:** Trailing whitespace, end-of-file fixes, YAML/TOML validation
 - **Code formatting:** Ruff formatter (tabs, single quotes, 120 char lines)
-- **Linting:** Ruff linter (focuses on bugs, unused code, simplifications)
-- **Type checking:** MyPy for static type analysis
-- **Code quality:** Pylint for additional code quality checks
-- **Test coverage:** Pytest with coverage reporting
+- **Linting:** Ruff linter with complexity metrics (bugs, unused code, simplifications, McCabe complexity)
+- **Type checking:** MyPy for static type analysis with error codes and column numbers
+- **Code quality:** Pylint for comprehensive code quality analysis
 
 **Manual pre-commit run:**
 ```bash
