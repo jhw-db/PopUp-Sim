@@ -3,18 +3,7 @@
 PopUp-Sim is a microscopic simulation tool that models the European freight rail industry's transition to Digital Automatic Couplers (DAC), simulating the complex logistics of retrofitting 500,000 freight wagons during a critical 3-week "big bang" migration period. The tool helps railway operators test different scenarios for temporary "pop-up" workshops, optimize locomotive schedules, and identify bottlenecks before real-world implementation to avoid costly mistakes during the actual migration.
 
 ## Installation
-
-### From PyPI
-
-**Using uv (Recommended):**
-```bash
-uv add PopUp-Sim
-```
-
-**Using pip:**
-```bash
-pip install PopUp-Sim
-```
+Currently installation is only possible from source. Installation using PyPi maybe added in the future.
 
 ### From Source
 
@@ -22,7 +11,7 @@ pip install PopUp-Sim
 ```bash
 git clone https://github.com/jhw-db/PopUp-Sim.git
 cd PopUp-Sim
-uv sync
+uv sync --frozen
 ```
 
 **Using pip:**
@@ -126,13 +115,13 @@ graph TD
     A --> C[frontend/]
     A --> D[pyproject.toml]
     A --> E[README.md]
-    
+
     B --> F[src/]
     B --> G[tests/]
     F --> H[popup_sim/]
-    
+
     C --> I[Vue.js application]
-    
+
     style A fill:#e1f5fe
     style B fill:#f3e5f5
     style C fill:#e8f5e8
