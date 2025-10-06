@@ -6,14 +6,14 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/python-backend.yaml'
-      - '.github/workflows/setup-python/**'
+      - '.github/actions/setup-python-**/**'
       - 'pyproject.toml'
       - 'uv.lock'
   push:
     branches: [main]
     paths:
       - 'backend/**'
-      - '.github/workflows/setup-python/**'
+      - '.github/actions/setup-python-**/**'
       - 'pyproject.toml'
       - 'uv.lock'
 
@@ -22,8 +22,10 @@ jobs:
     name: Code Formatting
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python development environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-dev
       - name: Check code formatting with ruff
         run: uv run ruff format --check --diff .
       - name: Summary
@@ -38,8 +40,10 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python development environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-dev
       - name: Lint with ruff (annotations)
         run: uv run ruff check --output-format=github .
       - name: Generate SARIF report
@@ -62,8 +66,10 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python development environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-dev
       - name: Lint with pylint
         run: uv run pylint backend/src/ --output-format=github,json:pylint-report.json
       - name: Upload pylint report
@@ -84,8 +90,10 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python development environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-dev
       - name: Add mypy problem matcher
         run: echo "::add-matcher::.github/problem-matchers/mypy.json"
       - name: Type check with mypy
@@ -94,7 +102,7 @@ jobs:
         run: echo "::remove-matcher owner=mypy::"
         if: always()
       - name: Generate mypy JSON report
-        run: uv run mypy backend/src/ --show-error-codes --no-error-summary --output json --exit-zero > mypy-report.json
+        run: uv run mypy backend/src/ --show-error-codes --no-error-summary --output json > mypy-report.json || true
         if: always()
       - name: Upload mypy report
         uses: actions/upload-artifact@v4
@@ -116,21 +124,27 @@ jobs:
     permissions:
       security-events: write
     steps:
-      - name: Setup Python production environment
-        uses: ./.github/setup-python/dev.yml
-      - name: Export production requirements
-        # Use requirements.txt instead of uv.lock to exclude dev dependencies
-        # Syft can read uv.lock but cannot filter dev dependencies
-        run: uv export --no-dev --format requirements-txt > requirements-prod.txt
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Check if dependencies exist
+        id: check-deps
+        run: |
+          if grep -q '^dependencies = \[\]$' pyproject.toml; then
+            echo "has_deps=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_deps=true" >> $GITHUB_OUTPUT
+          fi
       - name: Generate SBOM with Syft
         uses: anchore/sbom-action@v0
+        if: steps.check-deps.outputs.has_deps == 'true'
         with:
-          path: requirements-prod.txt
+          path: backend/src
           format: spdx-json
           artifact-name: sbom.spdx.json
       - name: Scan vulnerabilities with Grype
         uses: anchore/scan-action@v6
         id: scan
+        if: steps.check-deps.outputs.has_deps == 'true'
         with:
           path: sbom.spdx.json
           fail-build: false
@@ -140,7 +154,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
-        if: always()
+        if: steps.check-deps.outputs.has_deps == 'true' && always()
       - name: Upload security reports
         uses: actions/upload-artifact@v4
         with:
@@ -148,9 +162,14 @@ jobs:
           path: |
             sbom.json
             grype-report.json
-        if: always()
+        if: steps.check-deps.outputs.has_deps == 'true' && always()
       - name: Summary
-        run: echo "✅ No security vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+        run: |
+          if [ "${{ steps.check-deps.outputs.has_deps }}" = "true" ]; then
+            echo "✅ No security vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ Security scan skipped - no dependencies to scan" >> $GITHUB_STEP_SUMMARY
+          fi
         if: success()
       - name: Summary
         run: echo "⚠️ Security vulnerabilities detected" >> $GITHUB_STEP_SUMMARY
@@ -161,16 +180,27 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python development environment
-        uses: ./.github/setup-python/dev.yml
+        uses: ./.github/actions/setup-python-dev
       - name: Test with pytest
-        run: uv run pytest --tb=short || true
+        run: |
+          if [ -d "backend/tests" ] && [ "$(find backend/tests -name '*.py' -type f | wc -l)" -gt 0 ]; then
+            uv run pytest --tb=short
+          else
+            echo "No tests found, skipping pytest"
+            exit 0
+          fi
+        shell: bash
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
         if: hashFiles('coverage.xml') != ''
         with:
           file: ./coverage.xml
           fail_ci_if_error: false
+          flags: backend
+          name: backend-coverage
       - name: Summary
         run: echo "✅ Tests completed successfully" >> $GITHUB_STEP_SUMMARY
         if: success()
