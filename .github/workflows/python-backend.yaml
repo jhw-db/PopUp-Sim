@@ -117,13 +117,22 @@ jobs:
       - name: Setup Python development environment
         uses: ./.github/setup-python/dev.yml
       - name: Test with pytest
-        run: uv run pytest --tb=short || true
+        run: |
+          if [ -d "backend/tests" ] && [ "$(find backend/tests -name '*.py' -type f | wc -l)" -gt 0 ]; then
+            uv run pytest --tb=short
+          else
+            echo "No tests found, skipping pytest"
+            exit 0
+          fi
+        shell: bash
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
         if: hashFiles('coverage.xml') != ''
         with:
           file: ./coverage.xml
           fail_ci_if_error: false
+          flags: backend
+          name: backend-coverage
       - name: Summary
         run: echo "✅ Tests completed successfully" >> $GITHUB_STEP_SUMMARY
         if: success()
