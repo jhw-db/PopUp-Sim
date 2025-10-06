@@ -13,10 +13,10 @@ updates:
       - python
     reviewers:
       - jhw-db
-      - VolkerKuehn
+      - 36b498c8
     assignees:
       - jhw-db
-      - VolkerKuehn
+      - 36b498c8
     commit-message:
       prefix: "chore(backend): ⬆️ deps"
       prefix-development: "chore(backend): ⬆️ dev deps"
@@ -35,10 +35,10 @@ updates:
       - github-actions
     reviewers:
       - jhw-db
-      - VolkerKuehn
+      - 36b498c8
     assignees:
       - jhw-db
-      - VolkerKuehn
+      - 36b498c8
     commit-message:
       prefix: "chore: 💚 ci"
       include: "scope"
