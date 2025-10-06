@@ -22,6 +22,8 @@ jobs:
     name: Code Formatting
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python development environment
         uses: ./.github/actions/setup-python-dev
       - name: Check code formatting with ruff
@@ -38,6 +40,8 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python development environment
         uses: ./.github/actions/setup-python-dev
       - name: Lint with ruff (annotations)
@@ -62,6 +66,8 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python development environment
         uses: ./.github/actions/setup-python-dev
       - name: Lint with pylint
@@ -84,6 +90,8 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python development environment
         uses: ./.github/actions/setup-python-dev
       - name: Add mypy problem matcher
@@ -116,6 +124,8 @@ jobs:
     permissions:
       security-events: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python production environment
         uses: ./.github/actions/setup-python-prod
       - name: Export production requirements
@@ -161,6 +171,8 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Python development environment
         uses: ./.github/actions/setup-python-dev
       - name: Test with pytest
