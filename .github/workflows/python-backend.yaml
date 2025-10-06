@@ -142,7 +142,7 @@ jobs:
           format: spdx-json
           artifact-name: sbom.spdx.json
       - name: Scan vulnerabilities with Grype
-        uses: anchore/scan-action@v6
+        uses: anchore/scan-action@v7
         id: scan
         if: steps.check-deps.outputs.has_deps == 'true'
         with:
