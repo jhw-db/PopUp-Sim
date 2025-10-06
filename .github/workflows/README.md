@@ -10,7 +10,11 @@ Comprehensive quality assurance pipeline for Python backend code.
 **Triggers:**
 - Pull requests to `main` branch
 - Pushes to `main` branch
+<<<<<<< HEAD
 - Path filters: `backend/**`, workflow files, composite actions, `pyproject.toml`, `uv.lock`
+=======
+- Path filters: `backend/**`, workflow files, `pyproject.toml`, `uv.lock`
+>>>>>>> 335e478 (docs: 📝 update docs to current workflow)
 
 **Jobs:**
 1. **Code Formatting** - Ruff formatter validation
@@ -38,11 +42,19 @@ Repository-wide security posture assessment using OpenSSF Scorecard.
 
 ## Composite Actions
 
+<<<<<<< HEAD
 ### `.github/actions/`
 Reusable setup actions for Python environments:
 
 - **`setup-python-dev/action.yml`** - Development environment with all dependencies
 - **`setup-python-prod/action.yml`** - Production environment (dependencies only)
+=======
+### `.github/setup-python/`
+Reusable setup actions for Python environments:
+
+- **`dev.yml`** - Development environment with all dependencies
+- **`prod.yml`** - Production environment (dependencies only)
+>>>>>>> 335e478 (docs: 📝 update docs to current workflow)
 
 ## Problem Matchers
 
