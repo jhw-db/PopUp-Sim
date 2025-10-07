@@ -22,8 +22,13 @@ jobs:
     name: Code Formatting
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup Python development environment
         uses: ./.github/actions/setup-python-dev
       - name: Check code formatting with ruff
@@ -40,8 +45,13 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup Python development environment
         uses: ./.github/actions/setup-python-dev
       - name: Lint with ruff (annotations)
@@ -50,7 +60,7 @@ jobs:
         run: uv run ruff check --output-format=sarif --exit-zero -o ruff-results.sarif .
         if: always()
       - name: Upload SARIF results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@64d10c13136e1c5bce3e5fbde8d4906eeaafc885 # v3.30.6
         with:
           sarif_file: ruff-results.sarif
         if: always()
@@ -66,14 +76,19 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup Python development environment
         uses: ./.github/actions/setup-python-dev
       - name: Lint with pylint
         run: uv run pylint backend/src/ --output-format=github,json:pylint-report.json
       - name: Upload pylint report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: pylint-report
           path: pylint-report.json
@@ -90,8 +105,13 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup Python development environment
         uses: ./.github/actions/setup-python-dev
       - name: Add mypy problem matcher
@@ -105,7 +125,7 @@ jobs:
         run: uv run mypy backend/src/ --show-error-codes --no-error-summary --output json > mypy-report.json || true
         if: always()
       - name: Upload mypy report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: mypy-report
           path: mypy-report.json
@@ -124,8 +144,13 @@ jobs:
     permissions:
       security-events: write
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Check if dependencies exist
         id: check-deps
         run: |
@@ -135,14 +160,14 @@ jobs:
             echo "has_deps=true" >> $GITHUB_OUTPUT
           fi
       - name: Generate SBOM with Syft
-        uses: anchore/sbom-action@v0
+        uses: anchore/sbom-action@f8bdd1d8ac5e901a77a92f111440fdb1b593736b # v0.20.6
         if: steps.check-deps.outputs.has_deps == 'true'
         with:
           path: backend/src
           format: spdx-json
           artifact-name: sbom.spdx.json
       - name: Scan vulnerabilities with Grype
-        uses: anchore/scan-action@v7
+        uses: anchore/scan-action@f6601287cdb1efc985d6b765bbf99cb4c0ac29d8 # v7.0.0
         id: scan
         if: steps.check-deps.outputs.has_deps == 'true'
         with:
@@ -151,12 +176,12 @@ jobs:
           output-format: sarif
 
       - name: Upload SARIF results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@64d10c13136e1c5bce3e5fbde8d4906eeaafc885 # v3.30.6
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
         if: steps.check-deps.outputs.has_deps == 'true' && always()
       - name: Upload security reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: security-reports
           path: |
@@ -180,8 +205,13 @@ jobs:
     needs: format
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup Python development environment
         uses: ./.github/actions/setup-python-dev
       - name: Test with pytest
@@ -194,7 +224,7 @@ jobs:
           fi
         shell: bash
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
         if: hashFiles('coverage.xml') != ''
         with:
           file: ./coverage.xml
