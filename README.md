@@ -66,7 +66,7 @@ pip install .
 
 6. **Setup dev hooks:**
   ```bash
-  uv run ./setup/dev/setup_hooks.py
+  uv run ./setup/dev/set_commit_msg_hooks.py
    ```
 
 ### Development Commands
