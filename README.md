@@ -57,6 +57,11 @@ uv sync --frozen
    uv run pre-commit install
    ```
 
+6. **Setup dev hooks:**
+  ```bash
+  uv run ./setup/dev/set_commit_msg_hooks.py
+   ```
+
 ### Development Commands
 
 - **Run tests:**
