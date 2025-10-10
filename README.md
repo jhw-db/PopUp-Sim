@@ -14,18 +14,11 @@ cd PopUp-Sim
 uv sync --frozen
 ```
 
-**Using pip:**
-```bash
-git clone https://github.com/jhw-db/PopUp-Sim.git
-cd PopUp-Sim
-pip install .
-```
-
 ## Development Setup
 
 ### Prerequisites
 
-- Python 3.11 or higher
+- Python 3.13 or higher
 - [uv](https://docs.astral.sh/uv/) package manager
 
 ### Setup Development Environment
