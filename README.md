@@ -64,6 +64,11 @@ pip install .
    uv run pre-commit install
    ```
 
+6. **Setup dev hooks:**
+  ```bash
+  uv run ./setup/dev/setup_hooks.py
+   ```
+
 ### Development Commands
 
 - **Run tests:**
